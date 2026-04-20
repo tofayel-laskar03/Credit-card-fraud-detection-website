@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="12" fill="rgba(255,255,255,0.2)"/>
+                    <path d="M20 8L30 16V24C30 28.4 25.5 32 20 34C14.5 32 10 28.4 10 24V16L20 8Z" fill="white" opacity="0.9"/>
+                    <path d="M17 20L19.5 22.5L23.5 18" stroke="#5b6ef5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>Fraud Detection System</h1>
+            </div>
+            <p class="subtitle">AI-Powered Transaction Security</p>
+            <nav class="header-nav">
+                <a href="/history" class="nav-link">📊 History</a>
+                <a href="/metrics" class="nav-link">📈 Performance</a>
+                <a href="/monitoring" class="nav-link">🔍 Monitoring</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel - Input Form -->
+            <div class="card form-card">
+                <h2>Transaction Details</h2>
+                <p class="card-subtitle">Enter transaction information to check for fraud</p>
+                
+                <form id="fraudForm">
+                    <!-- Amount -->
+                    <div class="form-group">
+                        <label for="amount">
+                            <span class="label-text">Transaction Amount</span>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input 
+                                type="number" 
+                                id="amount" 
+                                name="amount" 
+                                placeholder="0.00" 
+                                step="0.01"
+                                min="0.01"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Transaction Type - DYNAMIC FROM MODEL -->
+                    <div class="form-group">
+                        <label for="transaction_type">
+                            <span class="label-text">Transaction Type</span>
+                            <span class="required">*</span>
+                        </label>
+                        <select id="transaction_type" name="transaction_type" required>
+                            <option value="">Select type...</option>
+                            {% for type in transaction_types %}
+                            <option value="{{ type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Merchant Category - DYNAMIC FROM MODEL -->
+                    <div class="form-group">
+                        <label for="merchant_category">
+                            <span class="label-text">Merchant Category</span>
+                            <span class="required">*</span>
+                        </label>
+                        <select id="merchant_category" name="merchant_category" required>
+                            <option value="">Select category...</option>
+                            {% for category in merchant_categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Country - DYNAMIC FROM MODEL -->
+                    <div class="form-group">
+                        <label for="country">
+                            <span class="label-text">Country</span>
+                            <span class="required">*</span>
+                        </label>
+                        <select id="country" name="country" required>
+                            <option value="">Select country...</option>
+                            {% for country_code in countries %}
+                            <option value="{{ country_code }}">{{ country_code }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Hour -->
+                    <div class="form-group">
+                        <label for="hour">
+                            <span class="label-text">Transaction Hour</span>
+                            <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="number" 
+                            id="hour" 
+                            name="hour" 
+                            placeholder="0-23" 
+                            min="0"
+                            max="23"
+                            required
+                        >
+                        <small class="form-hint">Enter hour in 24-hour format (0-23)</small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <span class="btn-text">Analyze Transaction</span>
+                        <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 5L15 10L10 15M15 10H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Panel - Results -->
+            <div class="card result-card" id="resultCard" style="display: none;">
+                <div class="result-header">
+                    <h2>Analysis Result</h2>
+                    <span class="result-timestamp" id="timestamp"></span>
+                </div>
+
+                <!-- Main Result -->
+                <div class="result-main" id="resultMain">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <h3 class="result-title" id="resultTitle"></h3>
+                    <p class="result-message" id="resultMessage"></p>
+                </div>
+
+                <!-- Risk Meter -->
+                <div class="risk-meter">
+                    <div class="meter-label">
+                        <span>Fraud Probability</span>
+                        <span class="meter-value" id="probabilityValue">0%</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="meterFill"></div>
+                    </div>
+                    <div class="meter-labels">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                    </div>
+                </div>
+
+                <!-- Risk Level Badge -->
+                <div class="risk-badge" id="riskBadge">
+                    <span class="badge-label">Risk Level</span>
+                    <span class="badge-value" id="riskLevel">-</span>
+                </div>
+
+                <!-- Transaction Summary -->
+                <div class="transaction-summary">
+                    <h4>Transaction Details</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Amount</span>
+                            <span class="summary-value" id="summaryAmount">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Type</span>
+                            <span class="summary-value" id="summaryType">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Merchant</span>
+                            <span class="summary-value" id="summaryMerchant">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Country</span>
+                            <span class="summary-value" id="summaryCountry">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Hour</span>
+                            <span class="summary-value" id="summaryHour">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="explanation-section" id="explanationSection" style="display: none; margin-top: 24px;">
+    <h4 class="explanation-title">
+        🔍 Why This Decision?
+    </h4>
+    <div id="explanationList"></div>
+</div>
+                <!-- Check Another Button -->
+                <button class="btn-secondary" onclick="resetForm()">
+                    Check Another Transaction
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <p>Analyzing transaction...</p>
+        </div>
+    </div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert"></div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

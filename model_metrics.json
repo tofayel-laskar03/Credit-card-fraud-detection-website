@@ -1,0 +1,57 @@
+{
+  "models": [
+    {
+      "name": "Logistic Regression",
+      "precision": 0.969932,
+      "recall": 1.0,
+      "f1_score": 0.984737,
+      "roc_auc": 0.999987,
+      "accuracy": 0.99845,
+      "true_positives": 1000,
+      "false_negatives": 0,
+      "true_negatives": 18969,
+      "false_positives": 31
+    },
+    {
+      "name": "Decision Tree",
+      "precision": 0.994024,
+      "recall": 0.998,
+      "f1_score": 0.996008,
+      "roc_auc": 0.999995,
+      "accuracy": 0.9996,
+      "true_positives": 998,
+      "false_negatives": 2,
+      "true_negatives": 18994,
+      "false_positives": 6
+    },
+    {
+      "name": "Random Forest",
+      "precision": 0.991063,
+      "recall": 0.998,
+      "f1_score": 0.994519,
+      "roc_auc": 0.999969,
+      "accuracy": 0.99945,
+      "true_positives": 998,
+      "false_negatives": 2,
+      "true_negatives": 18991,
+      "false_positives": 9
+    }
+  ],
+  "selected_model": "Random Forest",
+  "dataset_info": {
+    "total_samples": 100000,
+    "training_samples": 80000,
+    "test_samples": 20000,
+    "fraud_percentage": 5.0,
+    "features_count": 7
+  },
+  "feature_importance": {
+    "amount": 0.35,
+    "merchant_category_enc": 0.22,
+    "country_enc": 0.18,
+    "is_high_amount": 0.12,
+    "is_night": 0.08,
+    "hour": 0.03,
+    "transaction_type_enc": 0.02
+  }
+}

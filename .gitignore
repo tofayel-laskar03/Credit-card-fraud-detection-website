@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Database (local only - regenerated on each machine)
+*.db
+fraud_predictions.db
+
+# Logs (generated at runtime)
+*.log
+monitoring_log.json
+
+# Environment variables
+.env
+.env.local
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Windows
+Thumbs.db
+
+# DVC (for large files)
+/Dataset/*.csv
+.dvc/
+.dvc/cache/
+.dvc/tmp/
+*.xlsx
+
+# Keep these files (override above rules if needed)
+!requirements.txt
+!README.md
+!/Dataset/*.csv.dvc
+
+# Bin folder (unnecessary files moved here)
+bin/

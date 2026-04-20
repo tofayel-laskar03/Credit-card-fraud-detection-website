@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: fraud-detection-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./fraud_predictions.db:/app/fraud_predictions.db
+      - ./model_versions.json:/app/model_versions.json
+      - ./monitoring_log.json:/app/monitoring_log.json
+      - ./model_metrics.json:/app/model_metrics.json
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+networks:
+  default:
+    name: fraud-detection-network
